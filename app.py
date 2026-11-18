@@ -9,7 +9,7 @@ st.set_page_config(page_title="LexiTech 2.0 | Tax-Trap Collision Engine", page_i
 st.markdown("""
 <style>
 @import url('https://googleapis.com');
-html, body, .stApp, p, label, span, div, h1, h2, h3, h4, li { font-family: 'Plus Jakarta Sans', sans-serif !important; color: #1A161F !important; }
+html, body, .stApp, p, label, h1, h2, h3, h4, li { font-family: 'Plus Jakarta Sans', sans-serif !important; color: #1A161F !important; }
 .stApp { background-color: #FFFFFF; background-image: radial-gradient(#E8C5D6 0.75px, transparent 0.75px); background-size: 22px 22px; }
 [data-testid="stSidebar"] { background: linear-gradient(180deg, #FDF2F7 0%, #F9E6F0 100%); border-right: 1px solid #E5B8CE; }
 .mono-tag { font-family: 'JetBrains Mono', monospace !important; font-size: 11px !important; font-weight: 700 !important; letter-spacing: 0.08em; color: #B81D6F !important; text-transform: uppercase; }
