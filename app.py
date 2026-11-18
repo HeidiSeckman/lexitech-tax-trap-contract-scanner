@@ -9,7 +9,6 @@ st.set_page_config(
     layout="wide"
 )
 
-# Signature LexiTech Berry & Blush Executive Styling
 st.markdown("""
     <style>
     .stApp { background-color: #FFFFFF; color: #1F1F24; }
@@ -119,25 +118,19 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- SIDEBAR ---
 if os.path.exists("LEXItech.PNG"):
     st.sidebar.image("LEXItech.PNG", width=135)
 st.sidebar.markdown("### 🔑 Engine Configuration")
-api_key = st.sidebar.text_input("Enter Gemini API Key", type="password", help="Get a free key from Google AI Studio")
+api_key = st.sidebar.text_input("Enter Gemini API Key", type="password")
 
 st.sidebar.markdown("---")
 st.sidebar.markdown("### ⚡ Quick Demo Mode")
-use_sample = st.sidebar.checkbox(
-    "Use Built-In Sample Collision Case",
-    value=False,
-    help="Test the engine immediately without uploading PDFs using a realistic Divorce & IRS Dependent Trap scenario."
-)
+use_sample = st.sidebar.checkbox("Use Built-In Sample Collision Case", value=False)
 
 st.sidebar.markdown("---")
 st.sidebar.caption("Built by **Heidi Seckman** • **LexiTech Legal & Tax AI**")
 
-# --- HEADER ---
-head_col1, head_col2 = st.columns([1, 4])
+head_col1, head_col2 = st.columns([1, 5])
 with head_col1:
     if os.path.exists("LEXItech.PNG"):
         st.image("LEXItech.PNG", width=120)
@@ -151,22 +144,16 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# --- SAMPLE DATA FOR ONE-CLICK DEMO ---
-SAMPLE_CONTRACT = """
-MARITAL SETTLEMENT & CUSTODY AGREEMENT (EXCERPT)
+SAMPLE_CONTRACT = """MARITAL SETTLEMENT & CUSTODY AGREEMENT (EXCERPT)
 Section 4.2 (Tax Dependency Allocation): Regardless of where the minor child resides during the calendar year, Father shall claim the minor child as a Qualifying Child dependent on his federal tax return every tax year without requiring any signed IRS release forms from Mother, even though Mother has primary physical custody for 290 nights per year.
 Section 4.3 (Spousal Support Deduction): Pursuant to this agreement executed in 2026, Payor Spouse shall deduct all monthly alimony payments of $2,500 on Schedule 1 of Form 1040, and Recipient Spouse shall report all received payments as taxable gross income.
-Section 7.1 (Independent Contractor Consulting): Following divorce, Spouse B will provide ongoing bookkeeping services for Spouse A's business from Spouse A's office using Spouse A's computer, working fixed hours (9:00 AM–5:00 PM) under Spouse A's direct supervision, classified strictly as a 1099-NEC Independent Contractor with no payroll tax withholding.
-"""
+Section 7.1 (Independent Contractor Consulting): Following divorce, Spouse B will provide ongoing bookkeeping services for Spouse A's business from Spouse A's office using Spouse A's computer, working fixed hours (9:00 AM–5:00 PM) under Spouse A's direct supervision, classified strictly as a 1099-NEC Independent Contractor with no payroll tax withholding."""
 
-SAMPLE_IRS_RULES = """
-IRS TAX REFERENCE SUMMARY (BENCHMARKED TO IRS PUB 4012 / PUB 4491 / PUB 17)
+SAMPLE_IRS_RULES = """IRS TAX REFERENCE SUMMARY (BENCHMARKED TO IRS PUB 4012 / PUB 4491 / PUB 17)
 1. Qualifying Child & Custodial Parent Rule (IRS Pub 4012, Tab C, Page C-4; Pub 4491, Lesson 3): Under IRC § 152(e), the custodial parent is the parent with whom the child lived for the greater number of nights during the year. A noncustodial parent CANNOT claim the child as a dependent unless the custodial parent signs Form 8332 (Release/Revocation of Release of Claim to Exemption for Child by Custodial Parent) and the noncustodial parent attaches Form 8332 to their return. Private divorce decrees executed after 2008 cannot substitute for Form 8332.
 2. Alimony Tax Treatment Post-TCJA (IRS Pub 4012, Tab E, Page E-2; Pub 17): For divorce or separation instruments executed after December 31, 2018, alimony or separate maintenance payments are NOT deductible by the payer spouse and are NOT includible in the gross income of the recipient spouse.
-3. Worker Classification — Employee vs. Independent Contractor (IRS Pub 15-A / Pub 4491): Under common-law behavioral and financial control rules, when the business controls when, where, and how work is performed, provides the equipment, and sets fixed hours, the worker is a W-2 statutory/common-law employee—not a 1099 independent contractor—regardless of what a private contract labels them.
-"""
+3. Worker Classification — Employee vs. Independent Contractor (IRS Pub 15-A / Pub 4491): Under common-law behavioral and financial control rules, when the business controls when, where, and how work is performed, provides the equipment, and sets fixed hours, the worker is a W-2 statutory/common-law employee—not a 1099 independent contractor—regardless of what a private contract labels them."""
 
-# --- DOCUMENT INPUTS ---
 if not use_sample:
     doc_col1, doc_col2 = st.columns(2)
     with doc_col1:
@@ -176,7 +163,7 @@ if not use_sample:
         st.markdown('<div class="lexi-card"><h4>📘 Document B: IRS Tax Manual</h4><p>Upload IRS Pub 4012, Pub 4491, Pub 17, or official tax instructions.</p></div>', unsafe_allow_html=True)
         irs_pdf = st.file_uploader("Upload IRS Reference Guide (PDF)", type=["pdf"], key="irs_pdf")
 else:
-    st.info("⚡ **Built-In Sample Case Active:** Testing a Marital Settlement & Contractor Agreement against IRS Pub 4012 / Pub 4491 rules.")
+    st.info("⚡ Built-In Sample Case Active: Testing a Marital Settlement & Contractor Agreement against IRS Pub 4012 / Pub 4491 rules.")
     with st.expander("👀 Preview Sample Documents Being Cross-Examined"):
         p1, p2 = st.columns(2)
         with p1:
@@ -193,20 +180,32 @@ focus_area = st.selectbox("Select Collision Audit Focus:", [
 
 custom_notes = st.text_input(
     "Optional Specific Question or Clause to Target:",
-    placeholder="e.g., Check if Section 4.2 violates custodial parent release rules or if any clause triggers penalties..."
+    placeholder="e.g., Check if Section 4.2 violates custodial parent release rules..."
 )
 
-# --- RUN COLLISION ENGINE ---
+SYSTEM_INSTRUCTIONS = """You are the LexiTech Clause-to-IRS Collision Engine, an elite legal-and-tax cross-examination auditor.
+You are given Document A (a private legal contract) and Document B (an official IRS tax reference manual).
+Strictly ground every finding ONLY in Document A and Document B. Never invent rules or citations.
+Structure your response into THREE clearly labeled sections using exact Markdown headings:
+
+## SECTION 1: TAX-TRAP COLLISION MATRIX
+Present a clean Markdown table with columns: | Risk Level | Contract Clause (Doc A) | IRS Rule & Citation (Doc B) | Hidden Tax Trap |
+Rate Risk Level as HIGH RISK, MODERATE RISK, or COMPLIANT. Cite exact section numbers from Document A and exact tab/lesson/page numbers from Document B.
+
+## SECTION 2: RENEGOTIATION REDLINES
+For every flagged risk, show:
+- **Original Risky Language (Doc A):** exact quote
+- **LexiTech Recommended Replacement Clause:** balanced, IRS-compliant contract wording ready to propose before signing
+- **Why This Fixes It:** plain-English explanation
+
+## SECTION 3: EXECUTIVE SUMMARY MEMO
+Provide a concise plain-English briefing summarizing the top action items before execution."""
+
 if st.button("🚀 Run Clause-to-IRS Collision Scan"):
     if not api_key:
-        st.warning("Please paste your Gemini API Key in the left sidebar first!")
-    elif not use_sample and (not contract_pdf or not irs_pdf):
-        st.warning("Please upload BOTH Document A (Legal Contract) and Document B (IRS Tax Manual)—or toggle 'Use Built-In Sample Collision Case' in the sidebar!")
-    else:
-        with st.spinner("Cross-examining contract clauses against IRS tax rules..."):
-            try:
-                client = genai.Client(api_key=api_key)
 
-                system_prompt = (
-                    "You are the LexiTech Clause-to-IRS Collision Engine, an elite legal-and-tax cross-examination auditor. "
-                    "You are given Document A (a private legal contract) and Document B (an official IRS tax reference manual). "
+
+
+
+st.markdown("---")
+st.caption("© 2026 LexiTech by Heidi Seckman. All rights reserved. Proprietary software and branding—unauthorized copying or commercial redistribution is prohibited. For educational and research assistance only; not legal or tax advice.")
