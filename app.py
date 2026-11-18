@@ -19,7 +19,6 @@ st.markdown("""
     }
     label, .stMarkdown, p, span, h1, h2, h3, h4, li { color: #1F1F24 !important; }
     
-    /* Input & Upload Boxes */
     .stSelectbox div[data-baseweb="select"] > div,
     .stTextArea textarea,
     .stTextInput input,
@@ -34,7 +33,6 @@ st.markdown("""
         color: #1F1F24 !important;
     }
 
-    /* LexiTech Cards & Banners */
     .lexi-hero {
         background: linear-gradient(135deg, #FDF2F7 0%, #FFFFFF 100%);
         border: 1.5px solid #E5B8CE;
@@ -60,7 +58,6 @@ st.markdown("""
         margin: 14px 0;
     }
 
-    /* Alert & Spinner Overrides */
     [data-testid="stAlert"],
     [data-testid="stAlertContainer"],
     [data-testid="stNotification"],
@@ -77,7 +74,6 @@ st.markdown("""
         color: #1F1F24 !important;
     }
 
-    /* Berry-Magenta Buttons with Guaranteed White Text */
     button,
     .stButton > button,
     .stDownloadButton > button,
@@ -107,7 +103,6 @@ st.markdown("""
         fill: #FFFFFF !important;
     }
 
-    /* Tabs Styling */
     .stTabs [data-baseweb="tab-list"] { gap: 8px; }
     .stTabs [data-baseweb="tab"] {
         background-color: #FDF2F7;
@@ -142,7 +137,7 @@ st.sidebar.markdown("---")
 st.sidebar.caption("Built by **Heidi Seckman** • **LexiTech Legal & Tax AI**")
 
 # --- HEADER ---
-head_col1, head_col2 = st.columns()
+head_col1, head_col2 = st.columns([1, 4])
 with head_col1:
     if os.path.exists("LEXItech.PNG"):
         st.image("LEXItech.PNG", width=120)
@@ -214,3 +209,4 @@ if st.button("🚀 Run Clause-to-IRS Collision Scan"):
 
                 system_prompt = (
                     "You are the LexiTech Clause-to-IRS Collision Engine, an elite legal-and-tax cross-examination auditor. "
+                    "You are given Document A (a private legal contract) and Document B (an official IRS tax reference manual). "
