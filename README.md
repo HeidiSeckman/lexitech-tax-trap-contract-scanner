@@ -5,6 +5,8 @@
 
 Unlike standard single-document chatbots, this application ingests **both** a private legal contract and an official IRS tax publication simultaneously—pitting contract language directly against federal tax rules to uncover hidden tax liabilities before a contract is signed.
 
+🔗 **Live Demo:** *(Add your Streamlit Community Cloud URL here once deployed)*
+
 ---
 
 ## 🚀 Key Features
