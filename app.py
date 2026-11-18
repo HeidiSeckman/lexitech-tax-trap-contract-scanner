@@ -1,116 +1,55 @@
 import streamlit as st
 from google import genai
 from google.genai import types
-import tempfile, os
+from PIL import Image
+import tempfile, os, base64, io
 
-st.set_page_config(page_title="LexiTech 2.0 | Tax-Trap Collision Engine", page_icon="⚖️", layout="wide")
+st.set_page_config(page_title="LexiTech 2.0 | Tax-Trap Collision Engine", page_icon="LEXItech.PNG", layout="wide")
 
 st.markdown("""
 <style>
 @import url('https://googleapis.com');
-
-html, body, .stApp, p, label, span, div, h1, h2, h3, h4, li {
-    font-family: 'Plus Jakarta Sans', sans-serif !important;
-    color: #1A161F !important;
-}
-.stApp {
-    background-color: #FFFFFF;
-    background-image: radial-gradient(#E8C5D6 0.75px, transparent 0.75px);
-    background-size: 22px 22px;
-}
-[data-testid="stSidebar"] {
-    background: linear-gradient(180deg, #FDF2F7 0%, #F9E6F0 100%);
-    border-right: 1px solid #E5B8CE;
-}
-.mono-tag {
-    font-family: 'JetBrains Mono', monospace !important;
-    font-size: 11px !important;
-    font-weight: 700 !important;
-    letter-spacing: 0.08em;
-    color: #B81D6F !important;
-    text-transform: uppercase;
-}
-.nav-bar {
-    background: rgba(255, 255, 255, 0.92);
-    backdrop-filter: blur(10px);
-    border: 1.5px solid #E5B8CE;
-    border-radius: 14px;
-    padding: 14px 22px;
-    margin-bottom: 18px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 4px 20px rgba(184, 29, 111, 0.07);
-}
-.status-pill {
-    background: #FDF2F7;
-    border: 1px solid #B81D6F;
-    border-radius: 999px;
-    padding: 5px 14px;
-    font-family: 'JetBrains Mono', monospace !important;
-    font-size: 11px !important;
-    font-weight: 700 !important;
-    color: #B81D6F !important;
-}
-.hero-box {
-    background: linear-gradient(135deg, #24101C 0%, #4A1533 55%, #881652 100%);
-    border-radius: 16px;
-    padding: 24px 28px;
-    margin-bottom: 20px;
-    box-shadow: 0 10px 28px rgba(184, 29, 111, 0.16);
-}
+html, body, .stApp, p, label, span, div, h1, h2, h3, h4, li { font-family: 'Plus Jakarta Sans', sans-serif !important; color: #1A161F !important; }
+.stApp { background-color: #FFFFFF; background-image: radial-gradient(#E8C5D6 0.75px, transparent 0.75px); background-size: 22px 22px; }
+[data-testid="stSidebar"] { background: linear-gradient(180deg, #FDF2F7 0%, #F9E6F0 100%); border-right: 1px solid #E5B8CE; }
+.mono-tag { font-family: 'JetBrains Mono', monospace !important; font-size: 11px !important; font-weight: 700 !important; letter-spacing: 0.08em; color: #B81D6F !important; text-transform: uppercase; }
+.nav-bar { background: rgba(255, 255, 255, 0.94); backdrop-filter: blur(10px); border: 1.5px solid #E5B8CE; border-radius: 14px; padding: 14px 22px; margin-bottom: 18px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 20px rgba(184, 29, 111, 0.07); }
+.status-pill { background: #FDF2F7; border: 1px solid #B81D6F; border-radius: 999px; padding: 6px 14px; font-family: 'JetBrains Mono', monospace !important; font-size: 11px !important; font-weight: 700 !important; color: #B81D6F !important; }
+.hero-box { background: linear-gradient(135deg, #24101C 0%, #4A1533 55%, #881652 100%); border-radius: 16px; padding: 24px 28px; margin-bottom: 20px; box-shadow: 0 10px 28px rgba(184, 29, 111, 0.16); }
 .hero-box h1, .hero-box p, .hero-box span { color: #FFFFFF !important; }
-.corpus-card {
-    background: #FFFFFF;
-    border: 1.5px solid #E5B8CE;
-    border-top: 4px solid #B81D6F;
-    border-radius: 14px;
-    padding: 16px 20px;
-    margin-bottom: 10px;
-    box-shadow: 0 4px 14px rgba(184, 29, 111, 0.05);
-}
-.kpi-card {
-    background: #FDF2F7;
-    border: 1.5px solid #E5B8CE;
-    border-radius: 12px;
-    padding: 14px 18px;
-    text-align: center;
-}
+.corpus-card { background: #FFFFFF; border: 1.5px solid #E5B8CE; border-top: 4px solid #B81D6F; border-radius: 14px; padding: 16px 20px; margin-bottom: 10px; box-shadow: 0 4px 14px rgba(184, 29, 111, 0.05); }
+.kpi-card { background: #FDF2F7; border: 1.5px solid #E5B8CE; border-radius: 12px; padding: 14px 18px; text-align: center; }
 .kpi-num { font-size: 26px !important; font-weight: 800 !important; color: #B81D6F !important; }
-.stSelectbox div[data-baseweb="select"] > div, .stTextArea textarea, .stTextInput input, [data-testid="stFileUploaderDropzone"] {
-    background-color: #FDF2F7 !important; color: #1A161F !important; border: 1.5px solid #E5B8CE !important; border-radius: 10px !important;
-}
-[data-testid="stAlert"], [data-testid="stAlertContainer"], .stSpinner > div {
-    background-color: #FDF2F7 !important; color: #1A161F !important; border: 1.5px solid #B81D6F !important; border-radius: 10px !important;
-}
-button, .stButton > button, .stDownloadButton > button, [data-testid="stFileUploaderDropzone"] button, [data-testid="stTextInput"] button {
-    background: linear-gradient(135deg, #B81D6F 0%, #8E1454 100%) !important;
-    color: #FFFFFF !important; border: none !important; border-radius: 10px !important; font-weight: 700 !important;
-    box-shadow: 0 4px 12px rgba(184, 29, 111, 0.22) !important;
-}
-button *, .stButton > button *, .stDownloadButton > button *, [data-testid="stFileUploaderDropzone"] button *, [data-testid="stTextInput"] button * {
-    color: #FFFFFF !important;
-}
+.stSelectbox div[data-baseweb="select"] > div, .stTextArea textarea, .stTextInput input, [data-testid="stFileUploaderDropzone"] { background-color: #FDF2F7 !important; color: #1A161F !important; border: 1.5px solid #E5B8CE !important; border-radius: 10px !important; }
+[data-testid="stAlert"], [data-testid="stAlertContainer"], .stSpinner > div { background-color: #FDF2F7 !important; color: #1A161F !important; border: 1.5px solid #B81D6F !important; border-radius: 10px !important; }
+button, .stButton > button, .stDownloadButton > button, [data-testid="stFileUploaderDropzone"] button, [data-testid="stTextInput"] button { background: linear-gradient(135deg, #B81D6F 0%, #8E1454 100%) !important; color: #FFFFFF !important; border: none !important; border-radius: 10px !important; font-weight: 700 !important; box-shadow: 0 4px 12px rgba(184, 29, 111, 0.22) !important; }
+button *, .stButton > button *, .stDownloadButton > button *, [data-testid="stFileUploaderDropzone"] button *, [data-testid="stTextInput"] button * { color: #FFFFFF !important; }
 [data-testid="stTextInput"] button svg { fill: #FFFFFF !important; }
 .stTabs [data-baseweb="tab"] { background-color: #FDF2F7; border-radius: 8px 8px 0 0; padding: 8px 18px; border: 1px solid #E5B8CE; font-weight: 600; }
 .stTabs [aria-selected="true"] { background: #B81D6F !important; }
 .stTabs [aria-selected="true"] * { color: #FFFFFF !important; }
-.lexitech-footer {
-    background: #FDF2F7; border: 1px solid #E5B8CE; border-radius: 12px; padding: 14px 18px; text-align: center; font-size: 12.5px; margin-top: 28px;
-}
+.lexitech-footer { background: #FDF2F7; border: 1px solid #E5B8CE; border-radius: 12px; padding: 14px 18px; text-align: center; font-size: 12.5px; margin-top: 28px; }
 </style>
 """, unsafe_allow_html=True)
 
-LOGO_SVG = """
-<div style="display:flex;align-items:center;gap:12px;">
-  <svg width="42" height="42" viewBox="0 0 64 64" fill="none" xmlns="http://w3.org">
-    <defs><linearGradient id="lx" x1="0" y1="0" x2="64" y2="64"><stop offset="0%" stop-color="#E83E8C"/><stop offset="100%" stop-color="#7A1149"/></linearGradient></defs>
-    <rect width="64" height="64" rx="16" fill="url(#lx)"/>
-    <path d="M20 20H44M32 20V46M22 46H42M18 28L24 20L30 28H18ZM34 28L40 20L46 28H34Z" stroke="white" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
-  </svg>
+logo_b64 = ""
+if os.path.exists("LEXItech.PNG"):
+    im = Image.open("LEXItech.PNG").convert("RGBA")
+    bbox = im.getbbox()
+    if bbox:
+        im = im.crop(bbox)
+    buf = io.BytesIO()
+    im.save(buf, format="PNG")
+    logo_b64 = base64.b64encode(buf.getvalue()).decode()
+
+LOGO_SVG = f"""
+<div style="display:flex;align-items:center;gap:16px;">
+  <div style="background:linear-gradient(135deg,#FDF2F7 0%,#FFFFFF 100%);border:2px solid #E5B8CE;border-radius:18px;padding:8px;box-shadow:0 6px 18px rgba(184,29,111,0.16);display:flex;align-items:center;justify-content:center;">
+    <img src="data:image/png;base64,{logo_b64}" style="width:86px;height:86px;object-fit:contain;image-rendering:high-quality;" />
+  </div>
   <div>
-    <div style="font-weight:800;font-size:20px;letter-spacing:-0.02em;line-height:1.1;">LEXI<span style="color:#B81D6F;">TECH</span></div>
-    <div class="mono-tag">LEGAL &amp; TAX AI STUDIO</div>
+    <div style="font-weight:800;font-size:26px;letter-spacing:-0.02em;line-height:1.1;">LEXI<span style="color:#B81D6F;">TECH</span></div>
+    <div class="mono-tag" style="font-size:12px !important;margin-top:3px;">LEGAL &amp; TAX AI STUDIO</div>
   </div>
 </div>
 """
@@ -126,7 +65,6 @@ with st.sidebar:
     st.caption("Tests a Marital Settlement & 1099 Agreement against IRS Pub 4012 / Pub 4491.")
     st.markdown("---")
     st.caption("Architected by **Heidi Seckman**")
-
 st.markdown(f"""
 <div class="nav-bar">
   {LOGO_SVG}
